@@ -300,12 +300,20 @@ bool TGIMain::events(void)
 		case SDL_JOYBUTTONDOWN:
 			sprintf(strTrace, "button %d %d\n", ev.jbutton.which, ev.jbutton.button);
 			TGIGlobals::Trace(strTrace);
-			for (j=0;j<vecInputMessage.size();j++)
+			// handle Vita Start button, should do the same as Escape key on Windows, shich is stop()
+			if (ev.jbutton.button == 11)
 			{
-				if (vecInputMessage[j].buttonEvent.which == ev.jbutton.which && 
-					vecInputMessage[j].buttonEvent.button == ev.jbutton.button)
+				stop();
+			}
+			else
+			{
+				for (j=0;j<vecInputMessage.size();j++)
 				{
-					vecCurrentMessage.push_back(&(vecInputMessage[j]));
+					if (vecInputMessage[j].buttonEvent.which == ev.jbutton.which &&
+						vecInputMessage[j].buttonEvent.button == ev.jbutton.button)
+					{
+						vecCurrentMessage.push_back(&(vecInputMessage[j]));
+					}
 				}
 			}
 			break;
