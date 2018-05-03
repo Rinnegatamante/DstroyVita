@@ -49,30 +49,6 @@ bool DstroyPressFire::init()
 	TGIuint8 i;
 
 	TGIGlobals::stopMusic();
-#ifdef GP2X
-	if (TGIGlobals::bRotateScreen)
-	{
-		if (DstroyGame::params.nPlayers == 1)
-		{
-			loadCommands(DstroyGlobals::addResText("commandsgp2xr"));
-		}
-		else
-		{
-			loadCommands(DstroyGlobals::addResText("commandsgp2xr2"));
-		}
-	}
-	else
-	{
-		if (DstroyGame::params.nPlayers == 1)
-		{
-			loadCommands(DstroyGlobals::addResText("commandsgp2x"));
-		}
-		else
-		{
-			loadCommands(DstroyGlobals::addResText("commandsgp2x2"));
-		}
-	}
-#endif
 
 	if (!loadCommands(DstroyGlobals::addConfigText("commands")))
 	{
@@ -83,7 +59,8 @@ bool DstroyPressFire::init()
 	message.lId	= 10;
 	message.lIdRecipient = 1;
 	message.bAutofire = false;
-	message.sdlKey = SCE_CTRL_CROSS;
+	message.buttonEvent.button = 2;
+	message.buttonEvent.which = 0;
 	vecInputMessage.push_back(message);
 
 	DstroyPressFireItem* pItem;

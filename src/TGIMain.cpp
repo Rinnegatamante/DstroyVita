@@ -207,7 +207,6 @@ void TGIMain::run()
 	exit();
 }
 
-#ifndef __NDS__
 bool TGIMain::events(void)
 {
 	register std::list<std::pair<TGIObject*, TGIint> >::iterator itObject; 
@@ -301,54 +300,6 @@ bool TGIMain::events(void)
 		case SDL_JOYBUTTONDOWN:
 			sprintf(strTrace, "button %d %d\n", ev.jbutton.which, ev.jbutton.button);
 			TGIGlobals::Trace(strTrace);
-
-#ifdef GP2X
-			if (ev.jbutton.button == GP2X_BUTTON_START)
-			{
-				stop();
-			}
-#ifndef TGI_NOSOUND
-			if (bSoundControl)
-			{
-				if (ev.jbutton.button == GP2X_BUTTON_VOLUP)
-				{
-					TGIGlobals::Trace("volup\n");
-					Mix_VolumeMusic(Mix_VolumeMusic(-1)+12);
-					Mix_Volume(-1, Mix_Volume(-1, -1)+12);
-				}
-				if (ev.jbutton.button == GP2X_BUTTON_VOLDOWN)
-				{
-					TGIGlobals::Trace("voldown\n");
-					if (Mix_VolumeMusic(-1) < 12)
-					{
-						Mix_VolumeMusic(0);
-						Mix_Volume(-1, 0);
-					}
-					else
-					{
-						Mix_VolumeMusic(Mix_VolumeMusic(-1)-12);
-						Mix_Volume(-1, Mix_Volume(-1, -1)-12);
-					}
-				}
-			}
-#endif
-			if (ev.jbutton.button < 8)
-			{
-				vecGP2XButtonPressed.push_back(ev.jbutton.button);
-			}
-			else
-			{
-				for (j=0;j<vecInputMessage.size();j++)
-				{
-					if (vecInputMessage[j].buttonEvent.which == ev.jbutton.which && 
-						vecInputMessage[j].buttonEvent.button == ev.jbutton.button)
-					{
-						vecCurrentMessage.push_back(&(vecInputMessage[j]));
-					}
-				}
-			}
-			//std::cout<<"down:"<<(long)(ev.jbutton.button)<<std::endl;
-#else
 			for (j=0;j<vecInputMessage.size();j++)
 			{
 				if (vecInputMessage[j].buttonEvent.which == ev.jbutton.which && 
@@ -357,33 +308,8 @@ bool TGIMain::events(void)
 					vecCurrentMessage.push_back(&(vecInputMessage[j]));
 				}
 			}
-#endif
 			break;
 		case SDL_JOYBUTTONUP:
-#ifdef GP2X
-			if (ev.jbutton.button < 8)
-			{
-				for (i=vecGP2XButtonPressed.size()-1;i>=0;i--)
-				{
-					if (vecGP2XButtonPressed[i] == ev.jbutton.button)
-					{
-						vecGP2XButtonPressed.erase(vecGP2XButtonPressed.begin() + i);
-					}
-				}
-			}
-			else
-			{
-				for (i=(TGIint)vecCurrentMessage.size()-1;i>=0;i--)
-				{
-					if (vecCurrentMessage[i]->buttonEvent.button == ev.jbutton.button)
-					{
-						vecCurrentMessage.erase(vecCurrentMessage.begin()+i);
-					}
-				}
-			}
-			//vecButtonUp.push_back(ev);
-			//std::cout<<"up:"<<(long)(ev.jbutton.button)<<std::endl;
-#else
 			for (i=(TGIint)vecCurrentMessage.size()-1;i>=0;i--)
 			{
 				if (vecCurrentMessage[i]->buttonEvent.which == ev.jbutton.which && 
@@ -392,7 +318,6 @@ bool TGIMain::events(void)
 					vecCurrentMessage.erase(vecCurrentMessage.begin()+i);
 				}
 			}
-#endif
 			break;
 		case SDL_JOYHATMOTION:
 			sprintf(strTrace, "hat %d %d %d\n", ev.jhat.which, ev.jhat.hat, ev.jhat.value);
@@ -447,22 +372,6 @@ bool TGIMain::events(void)
 		}
 	}
 
-	//gp2x stuff
-#ifdef GP2X
-	GP2XgetDirection(vecGP2XButtonPressed);
-
-	/*sprintf(strTrace, "(");
-	std::cout<<strTrace;
-	for (i=0;i<vecCurrentMessage.size();i++)
-	{
-		sprintf(strTrace, "%d", vecCurrentMessage[i]->lId);
-		std::cout<<strTrace;
-	}
-	std::cout<<")\n";*/
-	
-	
-#endif
-
 	bDoingEvents = true;
 
 	//for each object that move (quePasa)
@@ -491,151 +400,9 @@ bool TGIMain::events(void)
 
 	return true;
 }
-#else
-bool TGIMain::events(void)
-{
-	scanKeys();
-	int i,j;
-
-	u32 keyHeld = keysHeld();
-	u32 keyUp, keyDown;
-
-	keyDown = (keyHold ^ keyHeld) & keyHeld;
-	keyUp = (keyHold ^ keyHeld) & keyHold;
-
-	keyHold = keyHeld;
- 
-	if(keyHold & KEY_START)
-	{
-		stop();
-		return false;
-	}
-	
-	std::vector<TGIInputMessage>::iterator it;
-	std::vector<TGIInputMessage*>::iterator itCurrent;
-
-	for (i=(TGIint)vecCurrentMessage.size()-1;i>=0;i--)
-	{
-		if (vecCurrentMessage[i]->sdlKey & keyUp)
-		{
-			vecCurrentMessage.erase(vecCurrentMessage.begin()+i);
-		}
-	}
-
-	for (it=vecInputMessage.begin();it!=vecInputMessage.end();it++)
-	{
-		if (it->sdlKey & keyDown)
-		{
-			vecCurrentMessage.push_back(&(*it));
-		}
-	}
-
-	/*char strText[256];
-	sprintf(strText, "%d", vecCurrentMessage.size());
-	TGIGlobals::Trace(strText);*/
-
-	bDoingEvents = true;
-
-	for (itIndexQuePasa=listObjectToQuePasa.begin();itIndexQuePasa!=listObjectToQuePasa.end();itIndexQuePasa++)
-	{
-		//handling events
-		for (j=0;j<vecCurrentMessage.size();j++)
-		{
-			(*itIndexQuePasa)->onMessage(vecCurrentMessage[j]);
-		}
-
-		(*itIndexQuePasa)->quePasa();
-	}
-
-	bDoingEvents = false;
-
-	//delete non autofire input messages
-	for (i=(TGIint)vecCurrentMessage.size()-1;i>=0;i--)
-	{
-		if (!vecCurrentMessage[i]->bAutofire)
-		{
-
-			vecCurrentMessage.erase(vecCurrentMessage.begin()+i);
-		}
-	}
-	return true;
-}
-
-
-#endif
 
 void TGIMain::GP2XgetDirection(std::vector<TGIuint8> vecButtonPressed)
 {
-#ifdef GP2X
-	int i,j;
-	
-	bool bL, bU, bD, bR, bLU, bLD, bRU, bRD;
-	//up
-	for (i=vecCurrentMessage.size()-1;i>=0;i--)
-	{
-		if (vecCurrentMessage[i]->buttonEvent.button < 8)
-		{
-			vecCurrentMessage.erase(vecCurrentMessage.begin()+i);
-		}
-	}
-	//down
-	bL = bU = bD = bR = bLU = bLD = bRU = bRD = false;
-	for (i=0;i<vecButtonPressed.size();i++)
-	{
-		bL = (vecButtonPressed[i] == GP2X_BUTTON_LEFT);
-		bU = (vecButtonPressed[i] == GP2X_BUTTON_UP);
-		bD = (vecButtonPressed[i] == GP2X_BUTTON_DOWN);
-		bR = (vecButtonPressed[i] == GP2X_BUTTON_RIGHT);
-		bLU = (vecButtonPressed[i] == GP2X_BUTTON_UPLEFT);
-		bLD = (vecButtonPressed[i] == GP2X_BUTTON_DOWNLEFT);
-		bRU = (vecButtonPressed[i] == GP2X_BUTTON_UPRIGHT);
-		bRD = (vecButtonPressed[i] == GP2X_BUTTON_DOWNRIGHT);
-	}
-	if ((TGIGlobals::nGP2XmvtMode == 1 && (bL))
-		|| (TGIGlobals::nGP2XmvtMode == 2 && (bL || (bLU && !bU)))
-		|| (TGIGlobals::nGP2XmvtMode == 3 && (bL || (bLD && !bD))))
-	{
-		//std::cout<<"DOWN:"<<GP2X_BUTTON_LEFT<<std::endl;
-		for (i=0;i<vecInputMessage.size();i++)
-		{
-			if (vecInputMessage[i].buttonEvent.button == GP2X_BUTTON_LEFT)
-				vecCurrentMessage.push_back(&(vecInputMessage[i]));
-		}
-	}
-	if ((TGIGlobals::nGP2XmvtMode == 1 && (bU))
-		|| (TGIGlobals::nGP2XmvtMode == 2 && (bU || (bRU && !bR)))
-		|| (TGIGlobals::nGP2XmvtMode == 3 && (bU || (bLU && !bL))))
-	{
-		//std::cout<<"DOWN:"<<GP2X_BUTTON_UP<<std::endl;
-		for (i=0;i<vecInputMessage.size();i++)
-		{
-			if (vecInputMessage[i].buttonEvent.button == GP2X_BUTTON_UP)
-				vecCurrentMessage.push_back(&(vecInputMessage[i]));
-		}
-	}
-	if ((TGIGlobals::nGP2XmvtMode == 1 && (bR))
-		|| (TGIGlobals::nGP2XmvtMode == 2 && (bR || (bRD && !bD)))
-		|| (TGIGlobals::nGP2XmvtMode == 3 && (bR || (bRU && !bU))))
-	{
-		//std::cout<<"DOWN:"<<GP2X_BUTTON_RIGHT<<std::endl;
-		for (i=0;i<vecInputMessage.size();i++)
-		{
-			if (vecInputMessage[i].buttonEvent.button == GP2X_BUTTON_RIGHT)
-				vecCurrentMessage.push_back(&(vecInputMessage[i]));
-		}
-	}
-	if ((TGIGlobals::nGP2XmvtMode == 1 && (bD))
-		|| (TGIGlobals::nGP2XmvtMode == 2 && (bD || (bLD && !bL)))
-		|| (TGIGlobals::nGP2XmvtMode == 3 && (bD || (bRD && !bR))))
-	{
-		//std::cout<<"DOWN:"<<GP2X_BUTTON_DOWN<<std::endl;
-		for (i=0;i<vecInputMessage.size();i++)
-		{
-			if (vecInputMessage[i].buttonEvent.button == GP2X_BUTTON_DOWN)
-				vecCurrentMessage.push_back(&(vecInputMessage[i]));
-		}
-	}
-#endif
 }
 
 int TGIMain::threadDrawing(void* pp)
@@ -997,13 +764,6 @@ bool TGIMain::loadCommands(std::string cstrFile)
 	TGIInputMessage message;
 	while (message.load(tgiFile))
 	{
-#ifdef GP2X
-		if (message.buttonEvent.button == GP2X_BUTTON_VOLUP || message.buttonEvent.button == GP2X_BUTTON_VOLDOWN)
-		{
-			TGIGlobals::Trace("sound control disabled\n");
-			bSoundControl = false;
-		}
-#endif
 		vecInputMessage.push_back(message);
 	}	
 	tgiFile.close();

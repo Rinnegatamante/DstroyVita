@@ -48,7 +48,7 @@
 void createCommandsFromScratch()
 {
 	TGIFile save;
-	save.create(DstroyGlobals::addResText("commandsnds"), true);
+	save.create(DstroyGlobals::addResText("commands"), true);
 
 	TGIInputMessage message;
 
@@ -101,97 +101,6 @@ void createCommandsFromScratch()
 	strncpy(message.strName, "PLAYER1 FIRE", 256);
 	message.save(save);
 
-	/*message.reset();
-	message.lId	= left;
-	message.lIdRecipient = 2;
-	message.buttonEvent.button = GP2X_BUTTON_B;
-	message.buttonEvent.which = 0;
-	strncpy(message.strName, "LEFT", 256);
-	message.bAutofire = true;
-	message.save(save);
-
-	message.reset();
-	message.lId	= right;
-	message.lIdRecipient = 2;
-	message.buttonEvent.button = GP2X_BUTTON_A;
-	message.buttonEvent.which = 0;
-	strncpy(message.strName, "RIGHT", 256);
-	message.bAutofire = true;
-	message.save(save);
-
-	message.reset();
-	message.lId	= up;
-	message.lIdRecipient = 2;
-	message.buttonEvent.button = GP2X_BUTTON_X;
-	message.buttonEvent.which = 0;
-	strncpy(message.strName, "UP", 256);
-	message.bAutofire = true;
-	message.save(save);
-
-	message.reset();
-	message.lId	= down;
-	message.lIdRecipient = 2;
-	message.buttonEvent.button = GP2X_BUTTON_Y;
-	message.buttonEvent.which = 0;
-	strncpy(message.strName, "DOWN", 256);
-	message.bAutofire = true;
-	message.save(save);
-
-	message.reset();
-	message.lId	= 10;
-	message.lIdRecipient = 2;
-	message.buttonEvent.button = GP2X_BUTTON_SELECT;
-	message.buttonEvent.which = 0;
-	strncpy(message.strName, "FIRE", 256);
-	message.bAutofire = false;
-	message.save(save);*/
-
-/*	message.reset();
-	message.sdlKey = 0;
-	message.axisEvent.which = -1;
-	message.hatEvent.which = -1;
-	message.buttonEvent.which = -1;
-
-	message.reset();
-	message.lIdRecipient = 3;
-	message.lId = left;
-	message.bAutofire = true;
-	strncpy(message.strName, "LEFT", 256);
-	message.save(save);
-	message.lId = right;
-	strncpy(message.strName, "RIGHT", 256);
-	message.save(save);
-	message.lId = up;
-	strncpy(message.strName, "UP", 256);
-	message.save(save);
-	message.lId = down;
-	strncpy(message.strName, "DOWN", 256);
-	message.save(save);
-	message.lId = 10;
-	message.bAutofire = false;
-	strncpy(message.strName, "FIRE", 256);
-	message.save(save);
-
-	message.reset();
-	message.lIdRecipient = 4;
-	message.lId = left;
-	message.bAutofire = true;
-	strncpy(message.strName, "LEFT", 256);
-	message.save(save);
-	message.lId = right;
-	strncpy(message.strName, "RIGHT", 256);
-	message.save(save);
-	message.lId = up;
-	strncpy(message.strName, "UP", 256);
-	message.save(save);
-	message.lId = down;
-	strncpy(message.strName, "DOWN", 256);
-	message.save(save);
-	message.lId = 10;
-	message.bAutofire = false;
-	strncpy(message.strName, "FIRE", 256);
-	message.save(save);*/
-
 	save.close();
 }
 
@@ -234,130 +143,31 @@ int main(int argc, char* argv[])
 {
 	DstroyGlobals::init();
 
-	//DstroyGlobals::convertLevels();
-	//return 0;
-	//createCommandsFromScratch();
-	//return 0;
-/*#ifdef __NDS__
-
-	powerON(POWER_ALL);  
-	videoSetMode(MODE_0_2D | DISPLAY_BG0_ACTIVE);
-	vramSetBankA(VRAM_A_MAIN_BG);
-	BG0_CR = BG_MAP_BASE(31);
-	BG_PALETTE[255] = RGB15(31,31,31);
-	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(31), (u16*)CHAR_BASE_BLOCK(0), 16);
-	if (!fatInitDefault())  
-	{
-		TGIGlobals::Trace("Unable to initialize media device!");
-		return false;
-	}
-
-	WaitForVblank();
-	WaitForVblank();
-
-	
-
-#endif*/
-
 	TGIGlobals::Trace("starting...");
 
 	DstroyOptions options;
 	options.load();
 
-	bool bFullScreen = false;
+	bool bFullScreen = true;
 	int nSpriteSize = 1;
 	bool bRotateScreen = false;
-/*	int i;
-	for (i=1;i<argc;i++)
-	{
-		if (strcmp(argv[i], "-fs") == 0)
-		{
-			bFullScreen = true;
-		}
-		if (strcmp(argv[i], "-ds") == 0)
-		{
-			nSpriteSize = 2;
-		}
-	}*/
 
 	bFullScreen = options.bFullScreen;
 	if (options.bDoubleSize)
 		nSpriteSize = 2;
 	bRotateScreen = options.bRotateScreen;
 
-#ifdef GP2X
-	TGIGlobals::nGP2XmvtMode = options.nGP2XmvtMode;
-#endif
-
 	TGIGlobals::init(320, 240, nSpriteSize, bFullScreen, bRotateScreen);
 #ifndef TGI_NONET
 	SDLNet_Init();
 #endif
 
-	/*if (argc == 2 && argv[1][0] == 's')
-	{
-		DstroyMenuNetServer* pMenu = new DstroyMenuNetServer;
-		pMenu->init();
-		pMenu->run();
-
-		return 0;
-		//return server();
-	}
-	if (argc == 3 && argv[1][0] == 'c')
-	{
-		return client(argv[2]);
-	}*/
-	
-	/*DstroyGame::params.cstrFile = argv[1];
-	DstroyGame::params.setMode(GAMEMODE_FIGHT);
-	DstroyGame::params.nPlayers = 4;
-
-	DstroyGame* game = new DstroyGame;
-	game->init();
-	game->run();
-
-	return 0;*/
-
-/*	for (i=1;i<argc;i++)
-	{
-		if (strcmp(argv[i], "-fs") != 0 && strcmp(argv[i], "-ds") != 0)
-		{
-			DstroyGame::params.cstrFile = argv[1];
-			DstroyGame::params.setMode(GAMEMODE_FIGHT);
-			DstroyGame::params.nPlayers = 4;
-
-			DstroyGame* game = new DstroyGame;
-			game->init();
-			game->run();
-
-			return 0;
-		}
-	}*/
-
-	/*DstroyGame::params.nPlayers = 1;
-	DstroyGame::params.nDifficulty = 1;
-	DstroyGame::params.setLevel(2);
-	
-	DstroyGame::params.setMode(GAMEMODE_ADVENTURE);
-	
-	DstroyGame::params.pnLives[0] = 5;
-	DstroyGame::params.pnBombDuration[0] = 4;
-	DstroyGame::params.pnBombs[0] = 20;
-	DstroyGame::params.pnFlame[0] = 10;
-
-
-	DstroyGame* game = new DstroyGame;
-	game->init();
-	game->run();
-
-	return 0;*/
 #ifndef __NDS__
 	DstroyTitle* pTitle = new DstroyTitle;
 #else
 	DstroyMenuMain* pTitle = new DstroyMenuMain;
 #endif
-	//
-	//DstroyMenuGP2XCommands* pMenu = new DstroyMenuGP2XCommands;
+
 	while (TGIGlobals::theMain)
 	{
 		TGIGlobals::theMain->init();
@@ -366,11 +176,6 @@ int main(int argc, char* argv[])
 
 
 	TGIGlobals::exit();
-
-#ifdef GP2X
-	chdir("/usr/gp2x");
-	execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);
-#endif 
 
 	return 0;
 }

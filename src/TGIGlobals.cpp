@@ -114,7 +114,7 @@ bool TGIGlobals::init(TGIint screenWidth, TGIint screenHeight, TGIuint8 nSpriteS
 	scePowerSetGpuXbarClockFrequency(166);
 	sceCtrlSetSamplingMode(SCE_CTRL_MODE_ANALOG_WIDE);
 	
-	TGIGlobals::pScreen = SDL_SetVideoMode(TGIGlobals::screenWidth*nSpriteSize, TGIGlobals::screenHeight*nSpriteSize, 16, SDL_DOUBLEBUF);
+	TGIGlobals::pScreen = SDL_SetVideoMode(TGIGlobals::screenWidth*nSpriteSize, TGIGlobals::screenHeight*nSpriteSize, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
 	if (pScreen == NULL)
 	{
 		TGIGlobals::Trace("Error while initializing screen\n");

@@ -351,28 +351,36 @@ bool DstroyGame::init()
 	message.lId	= up;
 	message.lIdRecipient = 1;
 	message.bAutofire = true;
-	message.sdlKey = SCE_CTRL_UP;
+	message.buttonEvent.button = 8;
+	message.buttonEvent.which = 0;
 	vecInputMessage.push_back(message);
 
 	message.lId	= down;
 	message.lIdRecipient = 1;
-	message.sdlKey = SCE_CTRL_DOWN;
+	message.bAutofire = true;
+	message.buttonEvent.button = 6;
+	message.buttonEvent.which = 0;
 	vecInputMessage.push_back(message);
 
 	message.lId	= left;
 	message.lIdRecipient = 1;
-	message.sdlKey = SCE_CTRL_LEFT;
+	message.bAutofire = true;
+	message.buttonEvent.button = 7;
+	message.buttonEvent.which = 0;
 	vecInputMessage.push_back(message);
 
 	message.lId	= right;
+	message.bAutofire = true;
 	message.lIdRecipient = 1;
-	message.sdlKey = SCE_CTRL_RIGHT;
+	message.buttonEvent.button = 9;
+	message.buttonEvent.which = 0;
 	vecInputMessage.push_back(message);
 
 	message.lId	= 10;
 	message.lIdRecipient = 1;
 	message.bAutofire = false;
-	message.sdlKey = SCE_CTRL_CROSS;
+	message.buttonEvent.button = 2;
+	message.buttonEvent.which = 0;
 	vecInputMessage.push_back(message);
 
 	nLevelMinToQuePasa = 3;
