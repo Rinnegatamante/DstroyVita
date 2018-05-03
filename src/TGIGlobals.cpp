@@ -43,7 +43,7 @@ int TGIGlobals::nMusicRes = -1;
 #endif //__NDS__
 #endif
 std::vector<SDL_Joystick*> TGIGlobals::vecJoystick;
-TGIuint8 TGIGlobals::nSpriteSize = 1;
+TGIuint8 TGIGlobals::nSpriteSize = 2;
 #ifdef GP2X
 TGIuint8 TGIGlobals::nGP2XmvtMode = 1;
 #endif
@@ -104,7 +104,7 @@ bool TGIGlobals::init(TGIint screenWidth, TGIint screenHeight, TGIuint8 nSpriteS
 	}
 	TGIGlobals::Trace("SDL initiated");
 
-	TGIGlobals::nSpriteSize = 1;
+	TGIGlobals::nSpriteSize = 2;
 	TGIGlobals::screenWidth = 320;
 	TGIGlobals::screenHeight = 240;
 
