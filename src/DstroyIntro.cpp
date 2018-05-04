@@ -266,7 +266,7 @@ void DstroyIntro::setPage1(void)
 
 	TGIuint16 y = 41;
 	font.writeText("I", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("n the boodies country, everybody", 670, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("n the boodies country, everybody", 660, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("was happy... everybody?", 670, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("unfortunately not, a poor boodies", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("with big glasses was too shy to", 650, y, TAleft, 0, NULL, false); y += 12;
@@ -386,7 +386,7 @@ void DstroyIntro::setPage4(void)
 
 	TGIuint16 y = 41;
 	font.writeText("O", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("ur boodies decided to climb", 660, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("ur boodies decided to climb", 665, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("to the top of the frightening dark", 675, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("tower to meet theprince of evil.", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("because he was thinking that", 650, y, TAleft, 0, NULL, false); y += 12;
@@ -555,7 +555,7 @@ void DstroyIntro::setPage8(void)
 
 	TGIuint16 y = 41;
 	font.writeText("S", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("o he decided to send", 660, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("o he decided to send", 665, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("all his soldiers to conquer", 670, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("the beautiful boodies land.", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("", 650, y, TAleft, 0, NULL, false); y += 12;
