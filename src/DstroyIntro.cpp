@@ -346,9 +346,10 @@ void DstroyIntro::setPage3(void)
 	TGIuint16 y = 41;
 	font.writeText("H", 640, y, TAleft, 0, NULL, false); y += 5;
 	font.writeText(" e walked, walked... and walked again...", 661, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("he walked so much that he arrived in front", 661, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("of the dangerous \"imafraid\" tower,", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("where the dangerous dark bavor lives.", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText(" he walked so much that he arrived in", 661, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("front of the dangerous \"imafraid\"", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("tower, where the dangerous", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("dark bavor lives.", 650, y, TAleft, 0, NULL, false); y += 12;
 
 
 	bMoveImage = true;
@@ -386,8 +387,8 @@ void DstroyIntro::setPage4(void)
 	TGIuint16 y = 41;
 	font.writeText("O", 640, y, TAleft, 0, NULL, false); y += 5;
 	font.writeText("ur boodies decided to climb", 675, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("to the top of the frightening dark tower", 675, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("to meet theprince of evil.", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("to the top of the frightening dark", 675, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("tower to meet theprince of evil.", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("because he was thinking that", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("perhaps he could help him...", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("perhaps...", 650, y, TAleft, 0, NULL, false); y += 12;
@@ -428,7 +429,7 @@ void DstroyIntro::setPage5(void)
 	TGIuint16 y = 41;
 	font.writeText("A", 640, y, TAleft, 0, NULL, false); y += 5;
 	font.writeText("nd he was right,", 666, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("the great and slimy dark bavor,", 666, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText(" the great and slimy dark bavor,", 666, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("king of the meuries, offered his help!", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("he explained to our boodies that", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("he could make disappear his shyness", 650, y, TAleft, 0, NULL, false); y += 12;
@@ -514,11 +515,11 @@ void DstroyIntro::setPage7(void)
 	TGIuint16 y = 41;
 	font.writeText("D", 640, y, TAleft, 0, NULL, false); y += 5;
 	font.writeText("ark bavor so became a meurbood,", 670, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("blend of the two races,", 670, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText(" blend of the two races,", 670, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("boodies and meuries.", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("and because of his double mind,", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("he couldn't stand to be the king", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("of only one territory.", 660, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("of only one territory.", 650, y, TAleft, 0, NULL, false); y += 12;
 
 	bMoveImage = true;
 }
