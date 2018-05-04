@@ -555,7 +555,7 @@ void DstroyIntro::setPage8(void)
 
 	TGIuint16 y = 41;
 	font.writeText("S", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("o he decided to send", 670, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("o he decided to send", 660, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("all his soldiers to conquer", 670, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("the beautiful boodies land.", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("", 650, y, TAleft, 0, NULL, false); y += 12;
