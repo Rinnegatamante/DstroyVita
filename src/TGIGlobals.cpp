@@ -91,6 +91,8 @@ bool vflux_window = false;
 bool res_window = false;
 bool credits_window = false;
 bool vflux_enabled = false;
+bool hide_menubar = false;
+bool show_menubar = true;
 float vcolors[3];
 uint16_t *vindices;
 float *colors;
@@ -110,54 +112,65 @@ void ImGui_callback() {
 	
 	ImGui_ImplVitaGL_NewFrame();
 	
-	if (ImGui::BeginMainMenuBar()){
+	if (show_menubar) {
+		if (ImGui::BeginMainMenuBar()){
 		
-		if (ImGui::BeginMenu("Graphics")){
-			if (ImGui::MenuItem("Bilinear Filter", nullptr, bilinear)){
-				bilinear = !bilinear;
-				SDL_SetVideoModeBilinear(bilinear);
-			}
-			if (ImGui::MenuItem("vFlux Config", nullptr, vflux_window)){
-				vflux_window = !vflux_window;
-			}
-			if (ImGui::MenuItem("Resolution", nullptr, res_window)){
-				res_window = !res_window;
-			}
-			if (ImGui::BeginMenu("Shaders")){
-				if (ImGui::MenuItem("None", nullptr, shader == SDL_SHADER_NONE)){
-					shader = SDL_SHADER_NONE;
-					SDL_SetVideoShader(SDL_SHADER_NONE);
+			if (ImGui::BeginMenu("Graphics")){
+				if (ImGui::MenuItem("Bilinear Filter", nullptr, bilinear)){
+					bilinear = !bilinear;
+					SDL_SetVideoModeBilinear(bilinear);
 				}
-				if (ImGui::MenuItem("Sharp Bilinear", nullptr, shader == SDL_SHADER_SHARP_BILINEAR_SIMPLE)){
-					shader = SDL_SHADER_SHARP_BILINEAR_SIMPLE;
-					SDL_SetVideoShader(SDL_SHADER_SHARP_BILINEAR_SIMPLE);
+				if (ImGui::MenuItem("vFlux Config", nullptr, vflux_window)){
+					vflux_window = !vflux_window;
 				}
-				if (ImGui::MenuItem("Sharp Bilinear (Scanlines)", nullptr, shader == SDL_SHADER_SHARP_BILINEAR)){
-					shader = SDL_SHADER_SHARP_BILINEAR;
-					SDL_SetVideoShader(SDL_SHADER_SHARP_BILINEAR);
+				if (ImGui::MenuItem("Resolution", nullptr, res_window)){
+					res_window = !res_window;
 				}
-				if (ImGui::MenuItem("LCD 3x", nullptr, shader == SDL_SHADER_LCD3X)){
-					shader = SDL_SHADER_LCD3X;
-					SDL_SetVideoShader(SDL_SHADER_LCD3X);
-				}
-				if (ImGui::MenuItem("xBR x2", nullptr, shader == SDL_SHADER_XBR_2X_FAST)){
-					shader = SDL_SHADER_XBR_2X_FAST;
-					SDL_SetVideoShader(SDL_SHADER_XBR_2X_FAST);
+				if (ImGui::BeginMenu("Shaders")){
+					if (ImGui::MenuItem("None", nullptr, shader == SDL_SHADER_NONE)){
+						shader = SDL_SHADER_NONE;
+						SDL_SetVideoShader(SDL_SHADER_NONE);
+					}
+					if (ImGui::MenuItem("Sharp Bilinear", nullptr, shader == SDL_SHADER_SHARP_BILINEAR_SIMPLE)){
+						shader = SDL_SHADER_SHARP_BILINEAR_SIMPLE;
+						SDL_SetVideoShader(SDL_SHADER_SHARP_BILINEAR_SIMPLE);
+					}
+					if (ImGui::MenuItem("Sharp Bilinear (Scanlines)", nullptr, shader == SDL_SHADER_SHARP_BILINEAR)){
+						shader = SDL_SHADER_SHARP_BILINEAR;
+						SDL_SetVideoShader(SDL_SHADER_SHARP_BILINEAR);
+					}
+					if (ImGui::MenuItem("LCD 3x", nullptr, shader == SDL_SHADER_LCD3X)){
+						shader = SDL_SHADER_LCD3X;
+						SDL_SetVideoShader(SDL_SHADER_LCD3X);
+					}
+					if (ImGui::MenuItem("xBR x2", nullptr, shader == SDL_SHADER_XBR_2X_FAST)){
+						shader = SDL_SHADER_XBR_2X_FAST;
+						SDL_SetVideoShader(SDL_SHADER_XBR_2X_FAST);
+					}
+					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
 			}
-			ImGui::EndMenu();
-		}
 		
-		if (ImGui::BeginMenu("Info")){
-			if (ImGui::MenuItem("Credits", nullptr, credits_window)){
-				credits_window = !credits_window;
+			if (ImGui::BeginMenu("Extra")){
+				if (ImGui::MenuItem("Hide Menubar", nullptr, hide_menubar)){
+					hide_menubar = !hide_menubar;
+				}
+				if (ImGui::MenuItem("Credits", nullptr, credits_window)){
+					credits_window = !credits_window;
+				}
+				ImGui::EndMenu();
 			}
-			ImGui::EndMenu();
+		
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(870);
+		
+			ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate); 
+			ImGui::EndMainMenuBar();
 		}
-		
-		
-		if (vflux_window){
+	}
+	
+	if (vflux_window){
 			ImGui::Begin("vFlux Configuration", &vflux_window);
 			ImGui::ColorPicker3("Filter Color", vcolors);
 			ImGui::Checkbox("Enable vFlux", &vflux_enabled);
@@ -199,17 +212,11 @@ void ImGui_callback() {
 			ImGui::Text("Colan Wiser");
 			ImGui::Separator();
 			ImGui::TextColored(ImVec4(255, 255, 0, 255), "Special thanks to:");
-			ImGui::Text("rsn8887 for fixing shaders for vitaGL usage");
+			ImGui::Text("rsn8887 for fixing shaders for vitaGL usage and general SDL help");
 			ImGui::Text("ocornut for dear ImGui");
+			ImGui::Text("HtheB for the Livearea assets");
 			ImGui::End();
 		}
-		
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(870);
-		
-		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate); 
-		ImGui::EndMainMenuBar();
-	}
 	
 	if (vflux_enabled) {
 		memcpy(&colors[0], vcolors, sizeof(float) * 3);
@@ -258,9 +265,12 @@ void ImGui_callback() {
 	uint64_t delta_touch = sceKernelGetProcessTimeWide() - tmr1;
 	if (touch.reportNum > 0){
 		ImGui::GetIO().MouseDrawCursor = true;
+		show_menubar = true;
 		tmr1 = sceKernelGetProcessTimeWide();
-	}else if (delta_touch > 3000000) ImGui::GetIO().MouseDrawCursor = false;
-	
+	}else if (delta_touch > 3000000){
+		ImGui::GetIO().MouseDrawCursor = false;
+		show_menubar = false || (!hide_menubar);
+	}
 }
 
 bool TGIGlobals::init(TGIint screenWidth, TGIint screenHeight, TGIuint8 nSpriteSize, bool bFullScreen, bool bRotateScreen)
