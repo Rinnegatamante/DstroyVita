@@ -25,6 +25,7 @@
 DstroyMenuFight::DstroyMenuFight(void)
 {
 	nJoueurs = 2;
+	nMaxJoueurs = 4;
 #ifdef DESKTOP
 	nMaxJoueurs = 4;
 #endif

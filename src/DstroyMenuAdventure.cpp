@@ -33,7 +33,7 @@ DstroyMenuAdventure::DstroyMenuAdventure(void)
 #ifdef GP2X
 	nMaxJoueurs = 2;
 #endif
-	nMaxJoueurs = 1;
+	nMaxJoueurs = 4;
 }
 
 DstroyMenuAdventure::~DstroyMenuAdventure(void)
