@@ -386,7 +386,7 @@ void DstroyIntro::setPage4(void)
 
 	TGIuint16 y = 41;
 	font.writeText("O", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("ur boodies decided to climb", 675, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("ur boodies decided to climb", 660, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("to the top of the frightening dark", 675, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("tower to meet theprince of evil.", 650, y, TAleft, 0, NULL, false); y += 12;
 	font.writeText("because he was thinking that", 650, y, TAleft, 0, NULL, false); y += 12;
