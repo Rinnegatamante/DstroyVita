@@ -30,6 +30,8 @@
 #include <vitaGL.h>
 #include <imgui_vita.h>
 
+int _newlib_heap_size_user = 192 * 1024 * 1024;
+
 TGIMain* TGIGlobals::theMain = NULL;
 SDL_Surface* TGIGlobals::pScreen = NULL;
 TGIint TGIGlobals::screenWidth = 0;
