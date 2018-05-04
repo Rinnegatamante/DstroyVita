@@ -265,12 +265,12 @@ void DstroyIntro::setPage1(void)
 	addObject(pObject, 10);
 
 	TGIuint16 y = 41;
-	font.writeText("D", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("ans le pays boodies, tout le monde", 670, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("vivait heureux! tout le monde?", 670, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("...helas non, un pauvre boodies", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("lunetteux etait trop timide pour", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("aller s'amuser avec les autres!", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("I", 640, y, TAleft, 0, NULL, false); y += 5;
+	font.writeText("n the boodies country, everybody", 660, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("was happy... everybody?", 670, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("unfortunately not, a poor boodies", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("with big glasses was too shy to", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("speak and play with the others.", 650, y, TAleft, 0, NULL, false); y += 12;
 
 	bMoveImage = true;
 }
@@ -305,11 +305,11 @@ void DstroyIntro::setPage2(void)
 	addObject(pObject, 10);
 
 	TGIuint16 y = 41;
-	font.writeText("C", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("elui ci se sentait rejete par les", 663, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("siens et decida un jour de les quitter,", 663, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("plein de tristesse dans son coeur", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("a lui qu'il avait...", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("T", 640, y, TAleft, 0, NULL, false); y += 5;
+	font.writeText("his boodies was feeling rejected and", 663, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("decided to leave the country,", 663, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("because he was so... so...", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("so sad...", 650, y, TAleft, 0, NULL, false); y += 12;
 
 	bMoveImage = true;
 }
@@ -344,11 +344,12 @@ void DstroyIntro::setPage3(void)
 	addObject(pObject, 10);
 
 	TGIuint16 y = 41;
-	font.writeText("I", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("l marcha, marcha, marcha... et marcha", 661, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("encore. il marcha si tant plein qu'il", 661, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("arriva au pied du mont de la tour kifepeur,", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("dans laquelle habite l'immonde dark bavor!", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("H", 640, y, TAleft, 0, NULL, false); y += 5;
+	font.writeText(" e walked, walked... and walked again...", 661, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText(" he walked so much that he arrived in", 661, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("front of the dangerous \"imafraid\"", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("tower, where the dangerous", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("dark bavor lives.", 650, y, TAleft, 0, NULL, false); y += 12;
 
 
 	bMoveImage = true;
@@ -384,13 +385,13 @@ void DstroyIntro::setPage4(void)
 	addObject(pObject, 10);
 
 	TGIuint16 y = 41;
-	font.writeText("N", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("otre boodies decida malgre sa grande", 675, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("peur qu'il avait dans son ventre de", 675, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("monter pour le voir, parce que,", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("\"sait on jamais, se dit il, peut etre", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("qu'il pourra t'il m'aider... hein...", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("peut etre... quelque part... non?", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("O", 640, y, TAleft, 0, NULL, false); y += 5;
+	font.writeText("ur boodies decided to climb", 665, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("to the top of the frightening dark", 675, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("tower to meet theprince of evil.", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("because he was thinking that", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("perhaps he could help him...", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("perhaps...", 650, y, TAleft, 0, NULL, false); y += 12;
 
 
 	bMoveImage = true;
@@ -426,14 +427,14 @@ void DstroyIntro::setPage5(void)
 	addObject(pObject, 10);
 
 	TGIuint16 y = 41;
-	font.writeText("E", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("n effet, le grand et baveux dark bavor,", 666, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("roi des meuries, proposa de l'aider!", 666, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("il expliqua a notre boodies qu'il", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("pouvait faire disparaitre sa timidite", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("grace a la \"bassijissui\",une machine", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("diabolique qui fait peur mais qu'en", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("fait, elle fait du bien, en fait!", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("A", 640, y, TAleft, 0, NULL, false); y += 5;
+	font.writeText("nd he was right,", 666, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText(" the great and slimy dark bavor,", 666, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("king of the meuries, offered his help!", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("he explained to our boodies that", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("he could make disappear his shyness", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("thanks to a diabolic machine,", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("which causes only good things to people...", 650, y, TAleft, 0, NULL, false); y += 12;
 	
 
 	bMoveImage = true;
@@ -469,15 +470,15 @@ void DstroyIntro::setPage6(void)
 	addObject(pObject, 10);
 
 	TGIuint16 y = 41;
-	font.writeText("L", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("e desespoir de notre boodies etait", 675, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("si grand nenorme, qu'il accepta", 675, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("d'essayer la bassijisui, sans", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("se rendre compte de l'infame piege", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("tendu par dark bavor... car cette", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("diabolique machine etait en fait", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("une machine a absorber la vitalite", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("boodies!...", 660, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("D", 640, y, TAleft, 0, NULL, false); y += 5;
+	font.writeText("espair of our boodies was so big,", 675, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("that he accepted,", 675, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("without seeing that this machine of", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("madness was in fact a big trap!", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("indeed, it was created", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("to catch the mind of the boodies.", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("", 660, y, TAleft, 0, NULL, false); y += 12;
 
 	bMoveImage = true;
 }
@@ -513,12 +514,12 @@ void DstroyIntro::setPage7(void)
 
 	TGIuint16 y = 41;
 	font.writeText("D", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("ark bavor devint donc un meurbood,", 670, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("melange des deux races boodies et", 670, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("meuries. de par sa double personnalite,", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("celui ci ne supporta plus de n'etre qu'un", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("demi roi, ne controlant que le territoire", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("meuries.", 660, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("ark bavor so became a meurbood,", 670, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText(" blend of the two races,", 670, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("boodies and meuries.", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("and because of his double mind,", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("he couldn't stand to be the king", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("of only one territory.", 650, y, TAleft, 0, NULL, false); y += 12;
 
 	bMoveImage = true;
 }
@@ -553,15 +554,15 @@ void DstroyIntro::setPage8(void)
 	addObject(pObject, 10);
 
 	TGIuint16 y = 41;
-	font.writeText("D", 640, y, TAleft, 0, NULL, false); y += 5;
-	font.writeText("ark bavor decida donc d'envoyer ses", 670, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("troupes meuries envahir le joli pays", 670, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("boodies. surpris par cette attaque,", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("les boodies ne purent se defendre et", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("furent rapidement vaincus!", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("ainsi, les noirs dessins malefiques de", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("dark bavor furent realises et la terreur", 650, y, TAleft, 0, NULL, false); y += 12;
-	font.writeText("se mit a regner.", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("S", 640, y, TAleft, 0, NULL, false); y += 5;
+	font.writeText("o he decided to send", 665, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("all his soldiers to conquer", 670, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("the beautiful boodies land.", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("and as they were not ready to fight,", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("the boodies were quickly", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("defeated!", 650, y, TAleft, 0, NULL, false); y += 12;
+	font.writeText("", 650, y, TAleft, 0, NULL, false); y += 12;
 
 	bMoveImage = true;
 }
