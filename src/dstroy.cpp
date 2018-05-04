@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
 	DstroyOptions options;
 	options.load();
 
-	bool bFullScreen = true;
+	bool bFullScreen = false;
 	int nSpriteSize = 1;
 	bool bRotateScreen = false;
 

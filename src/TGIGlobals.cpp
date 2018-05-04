@@ -86,12 +86,21 @@ void TGIGlobals::Trace(std::string strMessage, ...)
 bool credits = false;
 bool bilinear = true;
 bool vflux_window = false;
+bool res_window = false;
 bool credits_window = false;
 bool vflux_enabled = false;
 float vcolors[3];
 uint16_t *vindices;
 float *colors;
 float *vertices;
+
+int screen_x = 0;
+int screen_y = 0;
+float screen_res_w = 960.0f;
+float screen_res_h = 544.0f;
+float old_screen_res_w = 960.0f;
+float old_screen_res_h = 544.0f;
+
 uint64_t tmr1;
 SDL_Shader shader = SDL_SHADER_NONE;
 
@@ -108,6 +117,9 @@ void ImGui_callback() {
 			}
 			if (ImGui::MenuItem("vFlux Config", nullptr, vflux_window)){
 				vflux_window = !vflux_window;
+			}
+			if (ImGui::MenuItem("Resolution", nullptr, res_window)){
+				res_window = !res_window;
 			}
 			if (ImGui::BeginMenu("Shaders")){
 				if (ImGui::MenuItem("None", nullptr, shader == SDL_SHADER_NONE)){
@@ -149,7 +161,30 @@ void ImGui_callback() {
 			ImGui::Checkbox("Enable vFlux", &vflux_enabled);
 			ImGui::End();
 		}
-		
+
+		if (res_window){
+			ImGui::Begin("Resolution", &res_window);
+			ImGui::SliderFloat("Width", &screen_res_w, 0.0f, 960.0f, "%g");
+			ImGui::SliderFloat("Height", &screen_res_h, 0.0f, 544.0f, "%g");
+			if (ImGui::Button("Fit (4:3)")){
+				screen_res_h = 544.0f;
+				screen_res_w = (4.0f * screen_res_h) / 3.0f;
+			}
+			if (ImGui::Button("Fit (16:10)")){
+				screen_res_h = 544.0f;
+				screen_res_w = (16.0f * screen_res_h) / 10.0f;
+			}
+			if (ImGui::Button("Full")){
+				screen_res_h = 544.0f;
+				screen_res_w = 960.0f;
+			}
+			if (ImGui::Button("2x")){
+				screen_res_h = 480.0f;
+				screen_res_w = 640.0f;
+			}
+			ImGui::End();
+		}
+
 		if (credits_window){
 			ImGui::Begin("Credits", &credits_window);
 			ImGui::TextColored(ImVec4(255, 255, 0, 255), "Dstroy Vita v.1.0");
@@ -208,6 +243,14 @@ void ImGui_callback() {
 	ImGui::Render();
 	ImGui_ImplVitaGL_RenderDrawData(ImGui::GetDrawData());
 	
+	if ((old_screen_res_w != screen_res_w) || (old_screen_res_h != screen_res_h)) {
+		screen_x = (int)(960.0f - screen_res_w) / 2;
+		screen_y = (int)(544.0f - screen_res_h) / 2;
+		SDL_SetVideoModeScaling(screen_x, screen_y, screen_res_w, screen_res_h);
+	}
+	old_screen_res_w = screen_res_w;
+	old_screen_res_h = screen_res_h;
+	
 	SceTouchData touch;
 	sceTouchPeek(SCE_TOUCH_PORT_FRONT, &touch, 1);
 	uint64_t delta_touch = sceKernelGetProcessTimeWide() - tmr1;
@@ -257,7 +300,7 @@ bool TGIGlobals::init(TGIint screenWidth, TGIint screenHeight, TGIuint8 nSpriteS
 		TGIGlobals::Trace("Error while initializing screen\n");
 		return false;
 	}
-	//SDL_SetVideoModeScaling(0, 0, 960, 544);
+	SDL_SetVideoModeScaling(0, 0, 960, 544);
 	
 	vindices = (uint16_t*)malloc(sizeof(uint16_t)*4);
 	colors = (float*)malloc(sizeof(float)*4*4);
