@@ -61,10 +61,8 @@ bool DstroyIntro2::init(void)
 	font.writeText("THE INFAMOUS DARK BAVOR", 160, y, TAcenter, 1, NULL, true); y += 13;
 	font.writeText("HAS MADE HIS DREAMS OF", 160, y, TAcenter, 1, NULL, true); y += 13;
 	font.writeText("CONQUEST TRUE AND IS", 160, y, TAcenter, 1, NULL, true); y += 13;
-	font.writeText("ABOUT TO MOLD THE WORLD'", 160, y, TAcenter, 1, NULL, true); y += 13;
-	font.writeText("APPRETE A FORMALISER", 160, y, TAcenter, 1, NULL, true); y += 13;
+	font.writeText("ABOUT TO MOLD THE WORLD", 160, y, TAcenter, 1, NULL, true); y += 13;
 	font.writeText("TO HIS IMAGE..!", 160, y, TAcenter, 1, NULL, true); y += 13;
-	font.writeText(" ", 160, y, TAcenter, 1, NULL, true); y += 13;
 	font.writeText(" ", 160, y, TAcenter, 1, NULL, true); y += 13;
 	font.writeText("IN THE SHADOWS,", 160, y, TAcenter, 1, NULL, true); y += 13;
 	font.writeText("THE RESISTANCE IS", 160, y, TAcenter, 1, NULL, true); y += 13;
