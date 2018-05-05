@@ -156,6 +156,13 @@ void ImGui_callback() {
 				if (ImGui::MenuItem("Hide Menubar", nullptr, hide_menubar)){
 					hide_menubar = !hide_menubar;
 				}
+                if (ImGui::MenuItem("Save settings")){
+					FILE *f = fopen("ux0:data/dstroydata/imgui.cfg", "wb+");
+					char str[256];
+					sprintf(str, "%u;%u;%f;%f;%u;%u;%f;%f;%f", bilinear ? 1 : 0, shader, screen_res_w, screen_res_h, hide_menubar ? 1 : 0, vflux_enabled ? 1 : 0, vcolors[0], vcolors[1], vcolors[2]);
+					fwrite(str, 1, strlen(str), f);
+					fclose(f);
+				}
 				if (ImGui::MenuItem("Credits", nullptr, credits_window)){
 					credits_window = !credits_window;
 				}
@@ -204,6 +211,7 @@ void ImGui_callback() {
 			ImGui::Begin("Credits", &credits_window);
 			ImGui::TextColored(ImVec4(255, 255, 0, 255), "Dstroy Vita v.1.0");
 			ImGui::Text("Port Author: Rinnegatamante");
+			ImGui::Text("Tester: HtheB");
 			ImGui::Separator();
 			ImGui::TextColored(ImVec4(255, 255, 0, 255), "Patreon Supporters:");
 			ImGui::Text("XandridFire");
@@ -212,9 +220,10 @@ void ImGui_callback() {
 			ImGui::Text("Colan Wiser");
 			ImGui::Separator();
 			ImGui::TextColored(ImVec4(255, 255, 0, 255), "Special thanks to:");
-			ImGui::Text("rsn8887 for fixing shaders for vitaGL usage and general SDL help");
+			ImGui::Text("rsn8887 for fixing shaders for vitaGL usage and multiple players support");
 			ImGui::Text("ocornut for dear ImGui");
 			ImGui::Text("HtheB for the Livearea assets");
+			ImGui::Text("xy2_ for the English translation");
 			ImGui::End();
 		}
 	
@@ -269,7 +278,7 @@ void ImGui_callback() {
 		tmr1 = sceKernelGetProcessTimeWide();
 	}else if (delta_touch > 3000000){
 		ImGui::GetIO().MouseDrawCursor = false;
-		show_menubar = false || (!hide_menubar);
+		show_menubar = !hide_menubar;
 	}
 }
 
@@ -343,6 +352,23 @@ bool TGIGlobals::init(TGIint screenWidth, TGIint screenHeight, TGIuint8 nSpriteS
 	ImGui::GetIO().MouseDrawCursor = false;
 	
 	SDL_SetVideoCallback(ImGui_callback);
+    
+	FILE *f = fopen("ux0:data/dstroydata/imgui.cfg", "rb");
+	if (f){
+		char str[256];
+		fread(str, 1, 256, f);
+		fclose(f);
+		uint32_t a,b,c;
+		sscanf(str, "%u;%u;%f;%f;%u;%u;%f;%f;%f", &a, &shader, &screen_res_w, &screen_res_h, &b, &c, &vcolors[0], &vcolors[1], &vcolors[2]);
+		bilinear = (a == 1);
+		hide_menubar = (b == 1);
+		vflux_enabled = (c == 1);
+		SDL_SetVideoShader(shader);
+		SDL_SetVideoModeBilinear(bilinear);
+		screen_x = (int)(960.0f - screen_res_w) / 2;
+		screen_y = (int)(544.0f - screen_res_h) / 2;
+		SDL_SetVideoModeScaling(screen_x, screen_y, screen_res_w, screen_res_h);
+	}
 	
 	//joysticks
 	int nJoys = SDL_NumJoysticks() - 1;
