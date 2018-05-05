@@ -72,7 +72,7 @@ bool DstroyMenuMain::init(void)
 #endif
 
 	
-	font.writeText("Dstroy Vita", TGIGlobals::screenWidth/2, 5, TAcenter, 1, NULL);
+	font.writeText("Dstroy Vita ", TGIGlobals::screenWidth/2, 5, TAcenter, 1, NULL);
 	font.writeText("http://narroin.free.fr/dstroy", TGIGlobals::screenWidth/2, 15, TAcenter,1 , NULL);
 
 
