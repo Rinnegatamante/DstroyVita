@@ -21,7 +21,6 @@
 
 #include "TGIGlobals.h"
 
-#include <vitasdk.h>
 //#include <fstream>
 
 TGIMain::TGIMain(void)
@@ -222,79 +221,7 @@ bool TGIMain::events(void)
 	
 	//events
 	//SDL_PumpEvents();
-	
-	// Analog support for movement
-	SceCtrlData pad;
-	sceCtrlPeekBufferPositive(0, &pad, 1);
-	if (pad.lx < 80){
-		for (j=0;j<vecInputMessage.size();j++)
-		{
-			if (vecInputMessage[j].buttonEvent.button == 7)
-			{
-				vecCurrentMessage.push_back(&(vecInputMessage[j]));
-			}
-		}
-	}else{
-		for (i=(TGIint)vecCurrentMessage.size()-1;i>=0;i--)
-		{
-			if (vecCurrentMessage[i]->buttonEvent.button == 7)
-			{
-				vecCurrentMessage.erase(vecCurrentMessage.begin()+i);
-			}
-		}
-	}
-	if (pad.lx > 174){
-		for (j=0;j<vecInputMessage.size();j++)
-		{
-			if (vecInputMessage[j].buttonEvent.button == 9)
-			{
-				vecCurrentMessage.push_back(&(vecInputMessage[j]));
-			}
-		}
-	}else{
-		for (i=(TGIint)vecCurrentMessage.size()-1;i>=0;i--)
-		{
-			if (vecCurrentMessage[i]->buttonEvent.button == 9)
-			{
-				vecCurrentMessage.erase(vecCurrentMessage.begin()+i);
-			}
-		}
-	}
-	if (pad.ly < 80){
-		for (j=0;j<vecInputMessage.size();j++)
-		{
-			if (vecInputMessage[j].buttonEvent.button == 8)
-			{
-				vecCurrentMessage.push_back(&(vecInputMessage[j]));
-			}
-		}
-	}else{
-		for (i=(TGIint)vecCurrentMessage.size()-1;i>=0;i--)
-		{
-			if (vecCurrentMessage[i]->buttonEvent.button == 8)
-			{
-				vecCurrentMessage.erase(vecCurrentMessage.begin()+i);
-			}
-		}
-	}
-	if (pad.ly > 174){
-		for (j=0;j<vecInputMessage.size();j++)
-		{
-			if (vecInputMessage[j].buttonEvent.button == 6)
-			{
-				vecCurrentMessage.push_back(&(vecInputMessage[j]));
-			}
-		}
-	}else{
-		for (i=(TGIint)vecCurrentMessage.size()-1;i>=0;i--)
-		{
-			if (vecCurrentMessage[i]->buttonEvent.button == 6)
-			{
-				vecCurrentMessage.erase(vecCurrentMessage.begin()+i);
-			}
-		}
-	}
-	
+
 	SDL_Event ev;
 	char strTrace[1000];
 	while(SDL_PollEvent(&ev))
@@ -321,6 +248,51 @@ bool TGIMain::events(void)
 				if (vecCurrentMessage[i]->sdlKey == ev.key.keysym.sym)
 				{
 					vecCurrentMessage.erase(vecCurrentMessage.begin()+i);
+				}
+			}
+			break;
+		case SDL_JOYAXISMOTION:
+			sprintf(strTrace, "axis %d %d %d\n", ev.jaxis.which, ev.jaxis.axis, ev.jaxis.value);
+			TGIGlobals::Trace(strTrace);
+			if (abs(ev.jaxis.value) < 10000)
+			{
+				//stops
+				for (i=(TGIint)vecCurrentMessage.size()-1;i>=0;i--)
+				{
+					if (vecCurrentMessage[i]->axisEvent.which == ev.jaxis.which && 
+						vecCurrentMessage[i]->axisEvent.axis == ev.jaxis.axis)
+					{
+						vecCurrentMessage.erase(vecCurrentMessage.begin() + i);
+						break;
+					}
+				}
+			}
+			else
+			{
+				bHere = false;
+				//tests if the message is already in the messages list
+				for (i=(TGIint)vecCurrentMessage.size()-1;i>=0;i--)
+				{
+					if (vecCurrentMessage[i]->axisEvent.which == ev.jaxis.which && 
+						vecCurrentMessage[i]->axisEvent.axis == ev.jaxis.axis && 
+						vecCurrentMessage[i]->axisEvent.value * ev.jaxis.value > 0)
+					{
+						bHere = true;
+						break;
+					}
+				}
+				if (!bHere)
+				{
+					for (j=0;j<vecInputMessage.size();j++)
+					{
+						if (vecInputMessage[j].axisEvent.which == ev.jaxis.which && 
+							vecInputMessage[j].axisEvent.axis == ev.jaxis.axis && 
+							vecInputMessage[j].axisEvent.value * ev.jaxis.value > 0 && 
+							abs(ev.jaxis.value) > 10000)
+						{
+							vecCurrentMessage.push_back(&(vecInputMessage[j]));
+						}
+					}
 				}
 			}
 			break;

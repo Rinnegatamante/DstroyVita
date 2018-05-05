@@ -347,42 +347,148 @@ bool DstroyGame::init()
 
 	loadCommands(DstroyGlobals::addConfigText("commands"));
 
+	// Player #1-4 controls on controller #0-3
 	TGIInputMessage message;
-	message.lId	= up;
-	message.lIdRecipient = 1;
-	message.bAutofire = true;
-	message.buttonEvent.button = 8;
-	message.buttonEvent.which = 0;
-	vecInputMessage.push_back(message);
 
-	message.lId	= down;
-	message.lIdRecipient = 1;
-	message.bAutofire = true;
-	message.buttonEvent.button = 6;
-	message.buttonEvent.which = 0;
-	vecInputMessage.push_back(message);
+	for (int i = 1; i <= 4; i++) {
+		//dpad
+		message.reset();
+		message.lId	= up;
+		message.lIdRecipient = i;
+		message.buttonEvent.which = i - 1;
+		message.buttonEvent.button = 8;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
 
-	message.lId	= left;
-	message.lIdRecipient = 1;
-	message.bAutofire = true;
-	message.buttonEvent.button = 7;
-	message.buttonEvent.which = 0;
-	vecInputMessage.push_back(message);
+		message.reset();
+		message.lId	= down;
+		message.lIdRecipient = i;
+		message.buttonEvent.which = i - 1;
+		message.buttonEvent.button = 6;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
 
-	message.lId	= right;
-	message.bAutofire = true;
-	message.lIdRecipient = 1;
-	message.buttonEvent.button = 9;
-	message.buttonEvent.which = 0;
-	vecInputMessage.push_back(message);
+		message.reset();
+		message.lId	= left;
+		message.lIdRecipient = i;
+		message.buttonEvent.which = i - 1;
+		message.buttonEvent.button = 7;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
 
-	message.lId	= 10;
-	message.lIdRecipient = 1;
-	message.bAutofire = false;
-	message.buttonEvent.button = 2;
-	message.buttonEvent.which = 0;
-	vecInputMessage.push_back(message);
+		message.reset();
+		message.lId	= right;
+		message.lIdRecipient = i;
+		message.buttonEvent.which = i - 1;
+		message.buttonEvent.button = 9;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
 
+		// left analog
+		message.reset();
+		message.lId	= left;
+		message.lIdRecipient = i;
+		message.axisEvent.which = i - 1;
+		message.axisEvent.axis = 0;
+		message.axisEvent.value = -1;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
+
+		message.reset();
+		message.lId	= right;
+		message.lIdRecipient = i;
+		message.axisEvent.which = i - 1;
+		message.axisEvent.axis = 0;
+		message.axisEvent.value = 1;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
+
+		message.reset();
+		message.lId	= up;
+		message.lIdRecipient = i;
+		message.axisEvent.which = i - 1;
+		message.axisEvent.axis = 1;
+		message.axisEvent.value = -1;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
+		
+		message.reset();
+		message.lId	= down;
+		message.lIdRecipient = i;
+		message.axisEvent.which = i - 1;
+		message.axisEvent.axis = 1;
+		message.axisEvent.value = +1;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
+		
+		// cross = bomb
+		message.reset();
+		message.lId	= 10;
+		message.lIdRecipient = i;
+		message.buttonEvent.which = i - 1;
+		message.buttonEvent.button = 2;
+		message.bAutofire = false;
+		vecInputMessage.push_back(message);
+	}
+
+	// Additional controls to allow 2 player gaming on single handheld Vita
+	if (!sceKernelIsPSVitaTV())
+	{
+		// Player 1 bomb with L
+		message.reset();
+		message.lId	= 10;
+		message.lIdRecipient = 1;
+		message.buttonEvent.which = 0;
+		message.buttonEvent.button = 4;
+		message.bAutofire = false;
+		vecInputMessage.push_back(message);
+
+		// Player 2 on controller 1 with right stick and R button
+		message.reset();
+		message.lId	= left;
+		message.lIdRecipient = 2;
+		message.axisEvent.which = 0;
+		message.axisEvent.axis = 2;
+		message.axisEvent.value = -1;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
+
+		message.reset();
+		message.lId	= right;
+		message.lIdRecipient = 2;
+		message.axisEvent.which = 0;
+		message.axisEvent.axis = 2;
+		message.axisEvent.value = 1;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
+
+		message.reset();
+		message.lId	= up;
+		message.lIdRecipient = 2;
+		message.axisEvent.which = 0;
+		message.axisEvent.axis = 3;
+		message.axisEvent.value = -1;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
+		
+		message.reset();
+		message.lId	= down;
+		message.lIdRecipient = 2;
+		message.axisEvent.which = 0;
+		message.axisEvent.axis = 3;
+		message.axisEvent.value = +1;
+		message.bAutofire = true;
+		vecInputMessage.push_back(message);
+
+		message.reset();
+		message.lId	= 10;
+		message.lIdRecipient = 2;
+		message.buttonEvent.which = 0;
+		message.buttonEvent.button = 5;
+		message.bAutofire = false;
+		vecInputMessage.push_back(message);
+	}
+	
 	nLevelMinToQuePasa = 3;
 	nLevelMinFixedObjects = 0;
 
@@ -479,7 +585,7 @@ bool DstroyGame::loadMap(std::string strMap)
 	TGIuint16 nIA1=1, nIA2=0, nIA3=0, n16;
 	TGIuint16 nWidth=0, nHeight=0;
 	TGIuint16 version, order;
-	//probabilités
+	//probabilities
 	TGIuint8 nProbaBloc = 85;
 
 	TGIuint16 nxPlayer[4];
@@ -840,7 +946,7 @@ bool DstroyGame::loadMap(std::string strMap)
 		pNestCreator->initCreator(nNestLife[i], nNestPeriodicity[i], nNestMaxMonster[i], pNestOut);
 		pNestOut->setPosGrid(nxNestOut[i], nyNestOut[i]);
 		pNestCreator->setPosGrid(nxNestCreator[i], nyNestCreator[i]);
-		//on supprime les objets au meme endroit et on met un NO(0) à la place
+		//on supprime les objets au meme endroit et on met un NO(0) a la place
 		getObjectsOnPos(NULL, nxNestCreator[i], nyNestCreator[i], listObject);
 		/*for (j=0;j<vecObject.size();j++)
 		{
@@ -885,7 +991,7 @@ bool DstroyGame::loadMap(std::string strMap)
 
 
 	//placons les monstres sur le terrain
-	//cas spéciaux des boss
+	//cas speciaux des boss
 	if (/*strcmp(strMusic, "boss.mod")==0*/DstroyGame::params.nLevel == 48)
 	{
 		dsMonsterStandard1.lSpeed = 2;
@@ -1196,7 +1302,7 @@ void DstroyGame::createPlayers(void)
 
 		if (DstroyGame::params.pnLives[i] == 0)
 		{
-			//on ressuc(e?)ite a chaque début de nouveau niveau
+			//on ressuc(e?)ite a chaque debut de nouveau niveau
 			DstroyGame::params.pnLives[i] = 1;
 			pdsPlayer[i]->nBombsLeft = pdsPlayer[i]->nBombs = 1;
 			pdsPlayer[i]->nBombDurationLeft = 4;
@@ -1204,7 +1310,7 @@ void DstroyGame::createPlayers(void)
 			//mais qui est "ite"?
 		}
 		
-		//swap (pr n'échanger qu'une fois, on échange que le plus petit avec le plus grand)
+		//swap (pr n'echanger qu'une fois, on echange que le plus petit avec le plus grand)
 		if (i<DstroyGame::params.pnSwap[i])
 			swapPlayers(i, DstroyGame::params.pnSwap[i]);
 
@@ -1290,7 +1396,7 @@ bool DstroyGame::events(void)
 		}
 		if (nAlive <= 1 && this->vecBomb.empty())
 		{
-			//gagné!
+			//gagne!
 			if (nOneAlive != -1)
 				DstroyGame::params.pnWins[nOneAlive]++;
 			finishGame();
@@ -1330,7 +1436,7 @@ bool DstroyGame::events(void)
 		}
 		if (this->vecMonster.empty() && this->vecNest.empty() && this->vecBomb.empty())
 		{
-			//gagné!
+			//gagne!
 			DstroyGame::params.setLevel(DstroyGame::params.nLevel+1);
 			for(i=0;i<4;i++)
 			{
