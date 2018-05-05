@@ -107,6 +107,27 @@ float old_screen_res_h = 544.0f;
 
 uint64_t tmr1;
 SDL_Shader shader = SDL_SHADER_NONE;
+bool cfg_exists = false;
+
+void loadImGuiCfg(){
+	FILE *f = fopen("ux0:data/dstroydata/imgui.cfg", "rb");
+	if (f){
+		char str[256];
+		fread(str, 1, 256, f);
+		fclose(f);
+		uint32_t a,b,c;
+		sscanf(str, "%u;%u;%f;%f;%u;%u;%f;%f;%f", &a, &shader, &screen_res_w, &screen_res_h, &b, &c, &vcolors[0], &vcolors[1], &vcolors[2]);
+		bilinear = (a == 1);
+		hide_menubar = (b == 1);
+		vflux_enabled = (c == 1);
+		SDL_SetVideoShader(shader);
+		SDL_SetVideoModeBilinear(bilinear);
+		screen_x = (int)(960.0f - screen_res_w) / 2;
+		screen_y = (int)(544.0f - screen_res_h) / 2;
+		SDL_SetVideoModeScaling(screen_x, screen_y, screen_res_w, screen_res_h);
+		cfg_exists = true;
+	}
+}
 
 void ImGui_callback() {
 	
@@ -156,13 +177,19 @@ void ImGui_callback() {
 				if (ImGui::MenuItem("Hide Menubar", nullptr, hide_menubar)){
 					hide_menubar = !hide_menubar;
 				}
+				ImGui::Separator();
 				if (ImGui::MenuItem("Save settings")){
 					FILE *f = fopen("ux0:data/dstroydata/imgui.cfg", "wb+");
 					char str[256];
 					sprintf(str, "%u;%u;%f;%f;%u;%u;%f;%f;%f", bilinear ? 1 : 0, shader, screen_res_w, screen_res_h, hide_menubar ? 1 : 0, vflux_enabled ? 1 : 0, vcolors[0], vcolors[1], vcolors[2]);
 					fwrite(str, 1, strlen(str), f);
 					fclose(f);
+					cfg_exists = true;
 				}
+				if (ImGui::MenuItem("Load settings", nullptr, false, cfg_exists)){
+					loadImGuiCfg();
+				}
+				ImGui::Separator();
 				if (ImGui::MenuItem("Credits", nullptr, credits_window)){
 					credits_window = !credits_window;
 				}
@@ -353,22 +380,7 @@ bool TGIGlobals::init(TGIint screenWidth, TGIint screenHeight, TGIuint8 nSpriteS
 	
 	SDL_SetVideoCallback(ImGui_callback);
 	
-	FILE *f = fopen("ux0:data/dstroydata/imgui.cfg", "rb");
-	if (f){
-		char str[256];
-		fread(str, 1, 256, f);
-		fclose(f);
-		uint32_t a,b,c;
-		sscanf(str, "%u;%u;%f;%f;%u;%u;%f;%f;%f", &a, &shader, &screen_res_w, &screen_res_h, &b, &c, &vcolors[0], &vcolors[1], &vcolors[2]);
-		bilinear = (a == 1);
-		hide_menubar = (b == 1);
-		vflux_enabled = (c == 1);
-		SDL_SetVideoShader(shader);
-		SDL_SetVideoModeBilinear(bilinear);
-		screen_x = (int)(960.0f - screen_res_w) / 2;
-		screen_y = (int)(544.0f - screen_res_h) / 2;
-		SDL_SetVideoModeScaling(screen_x, screen_y, screen_res_w, screen_res_h);
-	}
+	loadImGuiCfg();
 	
 	//joysticks
 	int nJoys = SDL_NumJoysticks() - 1;
