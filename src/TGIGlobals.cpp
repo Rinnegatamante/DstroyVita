@@ -156,7 +156,7 @@ void ImGui_callback() {
 				if (ImGui::MenuItem("Hide Menubar", nullptr, hide_menubar)){
 					hide_menubar = !hide_menubar;
 				}
-                if (ImGui::MenuItem("Save settings")){
+				if (ImGui::MenuItem("Save settings")){
 					FILE *f = fopen("ux0:data/dstroydata/imgui.cfg", "wb+");
 					char str[256];
 					sprintf(str, "%u;%u;%f;%f;%u;%u;%f;%f;%f", bilinear ? 1 : 0, shader, screen_res_w, screen_res_h, hide_menubar ? 1 : 0, vflux_enabled ? 1 : 0, vcolors[0], vcolors[1], vcolors[2]);
@@ -352,7 +352,7 @@ bool TGIGlobals::init(TGIint screenWidth, TGIint screenHeight, TGIuint8 nSpriteS
 	ImGui::GetIO().MouseDrawCursor = false;
 	
 	SDL_SetVideoCallback(ImGui_callback);
-    
+	
 	FILE *f = fopen("ux0:data/dstroydata/imgui.cfg", "rb");
 	if (f){
 		char str[256];
