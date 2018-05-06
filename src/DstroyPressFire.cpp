@@ -355,7 +355,7 @@ bool DstroyPressFire::isEndGame(void)
 					sprintf(strText[2], "YOUR VICTORY IS ACCLAIMED");
 					sprintf(strText[3], "IN THE WHOLE COUNTRY,");
 					sprintf(strText[4], "AND THE NATION IS SINGING");
-					sprintf(strText[5], "PRAISES IN YOUR HONOR.);
+					sprintf(strText[5], "PRAISES IN YOUR HONOR.");
 					sprintf(strText[6], "YOUR OPPONENTS HAVE BEEN");
 					sprintf(strText[7], "HUMILIATED BUT ARE");
 					sprintf(strText[8], "PREPARING THEIR REVENGE!");
