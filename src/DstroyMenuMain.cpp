@@ -23,6 +23,8 @@
 #include "DstroyMenuFight.h"
 #include "DstroyMenuOptions.h"
 
+#include <vitasdk.h>
+
 DstroyMenuMain::DstroyMenuMain(void)
 {
 }
@@ -72,9 +74,7 @@ bool DstroyMenuMain::init(void)
 #endif
 
 	
-	font.writeText("Get latest version at", TGIGlobals::screenWidth/2, 5, TAcenter, 1, NULL);
-	font.writeText("http://narroin.free.fr/dstroy", TGIGlobals::screenWidth/2, 15, TAcenter,1 , NULL);
-
+	font.writeText("Dstroy Vita v.1.0", TGIGlobals::screenWidth/2, 5, TAcenter, 1, NULL);
 
 	writeText("ADVENTURE", nXPos, nYPos, TAcenter, &item);
 	item.nId = 1;
@@ -136,6 +136,7 @@ void DstroyMenuMain::doStuff(DstroyMenuItem* pItem, TGIInputMessage* pMessage)
 #ifndef __NDS__
 			//quit
 			stop();
+			sceKernelExitProcess(0);
 #endif
 		}
 	}
