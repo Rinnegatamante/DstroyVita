@@ -61,7 +61,7 @@ bool DstroyEndGame::init(void)
 	if (DstroyGame::params.nPlayers == 1)
 	{
 		pSurface->loadImage(DstroyGlobals::addResText("v1.pcx"));
-		font.writeText("CONGRATULATIONS, BLUE BOODIES!", TGIGlobals::screenWidth/2, nPos+=nStep, TAcenter, 2, NULL);
+		font.writeText("CONGRATULATIONS, BLUE BOODIES!", TGIGlobals::screenWidth/2, nPos+=nStep, TAcenter, 0, NULL);
 		font.writeText("", TGIGlobals::screenWidth/2, nPos+=nStep, TAcenter, 0, NULL);
 		font.writeText("YOUR BRAVERY AND COURAGE HAS", TGIGlobals::screenWidth/2, nPos+=nStep, TAcenter, 0, NULL);
 		font.writeText("ALLOWED YOU TO COUNTER ALL THE", TGIGlobals::screenWidth/2, nPos+=nStep, TAcenter, 0, NULL);
@@ -103,7 +103,7 @@ bool DstroyEndGame::init(void)
 			pSurface->loadImage(DstroyGlobals::addResText("v4.pcx"));
 			break;
 		} 
-		font.writeText("CONGRATULATIONS, BOODIES!", TGIGlobals::screenWidth/2, nPos+=nStep, TAcenter, 0, NULL);
+		font.writeText("CONGRATULATIONS, BOODIES!", TGIGlobals::screenWidth/2, nPos+=nStep, TAcenter, 2, NULL);
 		font.writeText("", TGIGlobals::screenWidth/2, nPos+=nStep, TAcenter, 0, NULL);
 		font.writeText("YOUR PERFECT TEAMWORK HAS", TGIGlobals::screenWidth/2, nPos+=nStep, TAcenter, 0, NULL);
 		font.writeText("ALLOWED YOU TO COUNTER ALL", TGIGlobals::screenWidth/2, nPos+=nStep, TAcenter, 0, NULL);
