@@ -22,6 +22,7 @@
 #include "DstroyMenuAdventure.h"
 #include "DstroyMenuFight.h"
 #include "DstroyMenuOptions.h"
+#include "processmgr.h" 
 
 DstroyMenuMain::DstroyMenuMain(void)
 {
@@ -71,7 +72,6 @@ bool DstroyMenuMain::init(void)
 	nYPos = 60;
 #endif
 
-	
 	writeText("ADVENTURE", nXPos, nYPos, TAcenter, &item);
 	item.nId = 1;
 	pManager->vecMenuItem.push_back(item);
@@ -80,14 +80,20 @@ bool DstroyMenuMain::init(void)
 	pManager->vecMenuItem.push_back(item);
 	writeText("OPTIONS", nXPos, nYPos+40, TAcenter, &item);
 	item.nId = 3;
-	
-	pManager->vecMenuItem[0].pUp = &(pManager->vecMenuItem[2]);
+	pManager->vecMenuItem.push_back(item);
+	writeText("EXIT", nXPos, nYPos+60, TAcenter, &item);
+	item.nId = -1;
+	pManager->vecMenuItem.push_back(item);
+
+	pManager->vecMenuItem[0].pUp = &(pManager->vecMenuItem[3]);
 	pManager->vecMenuItem[1].pUp = &(pManager->vecMenuItem[0]);
 	pManager->vecMenuItem[2].pUp = &(pManager->vecMenuItem[1]);
+	pManager->vecMenuItem[3].pUp = &(pManager->vecMenuItem[2]);
 
 	pManager->vecMenuItem[0].pDown = &(pManager->vecMenuItem[1]);
 	pManager->vecMenuItem[1].pDown = &(pManager->vecMenuItem[2]);
-	pManager->vecMenuItem[2].pDown = &(pManager->vecMenuItem[0]);
+	pManager->vecMenuItem[2].pDown = &(pManager->vecMenuItem[3]);
+	pManager->vecMenuItem[3].pDown = &(pManager->vecMenuItem[0]);
 
 	pManager->vecMenuItem[0].select(true);
 	pManager->pSelectedItem = &(pManager->vecMenuItem[0]);
@@ -112,6 +118,21 @@ void DstroyMenuMain::doStuff(DstroyMenuItem* pItem, TGIInputMessage* pMessage)
 			stop();
 			
 			DstroyMenuFight* pMenu = new DstroyMenuFight;
+#endif
+		}
+		if (pItem->nId == 3)
+		{
+			//options
+			stop();
+			
+			DstroyMenuOptions* pMenu = new DstroyMenuOptions;
+		}
+		if (pItem->nId == -1)
+		{
+#ifndef __NDS__
+			//quit
+			stop();
+	sceKernelExitProcess(0);
 #endif
 		}
 	}
