@@ -3,6 +3,7 @@
 *.velf
 *.bin
 *.vpk
+*.sfo
 
 # Windows image file caches
 Thumbs.db

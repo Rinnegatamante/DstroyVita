@@ -60,6 +60,7 @@ TGIGlobals::~TGIGlobals(void)
 {
 }
 
+#ifdef _TGI_DEBUG
 void LOG2FILE(const char *format, ...) {
 	__gnuc_va_list arg;
 	int done;
@@ -75,6 +76,7 @@ void LOG2FILE(const char *format, ...) {
 		fclose(log);
 	}
 }
+#endif
 
 void TGIGlobals::Trace(std::string strMessage, ...)
 {
@@ -93,10 +95,12 @@ bool credits_window = false;
 bool vflux_enabled = false;
 bool hide_menubar = false;
 bool show_menubar = true;
+bool vsync = true;
 float vcolors[3];
 uint16_t *vindices;
 float *colors;
-float *vertices;
+float *vflux_vertices;
+float *vflux_texcoords;
 
 int screen_x = 0;
 int screen_y = 0;
@@ -109,27 +113,123 @@ uint64_t tmr1;
 SDL_Shader shader = SDL_SHADER_NONE;
 bool cfg_exists = false;
 
+// PostFX effects
+enum {
+	POSTFX_NONE,
+	POSTFX_FXAA,
+	POSTFX_GREYSCALE,
+	POSTFX_SEPIA,
+	POSTFX_NEGATIVE
+};
+uint32_t postfx_shader = 0;
+GLuint main_fb = 0xDEADBEEF, main_fb_tex;
+GLuint cur_fx_shader[2] = {0xDEADBEEF, 0xDEADBEEF};
+static GLuint fx_fs[2], fx_vs[2];
+int postfx_idx = 0;
+
+void GL_LoadFXShader(const char* filename, GLboolean fragment){
+	FILE* f = fopen(filename, "rb");
+	fseek(f, 0, SEEK_END);
+	long int size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	void* res = malloc(size);
+	fread(res, 1, size, f);
+	fclose(f);
+	if (fragment) glShaderBinary(1, &fx_fs[postfx_idx], 0, res, size);
+	else glShaderBinary(1, &fx_vs[postfx_idx], 0, res, size);
+	free(res);
+}
+
+void setupPostFxFb() {
+	if (main_fb == 0xDEADBEEF) {
+		glGenTextures(1, &main_fb_tex);
+		glBindTexture(GL_TEXTURE_2D, main_fb_tex);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 960, 544, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		glGenFramebuffers(1, &main_fb);
+		glBindFramebuffer(GL_FRAMEBUFFER, main_fb);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, main_fb_tex, 0);
+	}
+	SDL_SetVideoFrameBuffer(main_fb);
+}
+
+void loadPostFxEffect(const char *vertex, const char *fragment)
+{
+	postfx_idx = (postfx_idx + 1) % 2;
+	if (cur_fx_shader[postfx_idx] != 0xDEADBEEF) {
+		glDeleteProgram(cur_fx_shader[postfx_idx]);
+		glDeleteShader(fx_vs[postfx_idx]);
+		glDeleteShader(fx_fs[postfx_idx]);
+	}
+	fx_vs[postfx_idx] = glCreateShader(GL_VERTEX_SHADER);
+	fx_fs[postfx_idx] = glCreateShader(GL_FRAGMENT_SHADER);
+	cur_fx_shader[postfx_idx] = glCreateProgram();
+	GL_LoadFXShader(vertex, GL_FALSE);
+	GL_LoadFXShader(fragment, GL_TRUE);
+	glAttachShader(cur_fx_shader[postfx_idx], fx_vs[postfx_idx]);
+	glAttachShader(cur_fx_shader[postfx_idx], fx_fs[postfx_idx]);
+	vglBindAttribLocation(cur_fx_shader[postfx_idx], 0, "position", 3, GL_FLOAT);
+	vglBindAttribLocation(cur_fx_shader[postfx_idx], 1, "texcoord", 2, GL_FLOAT);
+	glLinkProgram(cur_fx_shader[postfx_idx]);
+}
+
 void loadImGuiCfg(){
 	FILE *f = fopen("ux0:data/dstroydata/imgui.cfg", "rb");
 	if (f){
 		char str[256];
 		fread(str, 1, 256, f);
 		fclose(f);
-		uint32_t a,b,c;
-		sscanf(str, "%u;%u;%f;%f;%u;%u;%f;%f;%f", &a, &shader, &screen_res_w, &screen_res_h, &b, &c, &vcolors[0], &vcolors[1], &vcolors[2]);
+		uint32_t a,b,c,d;
+		sscanf(str, "%u;%u;%f;%f;%u;%u;%f;%f;%f;%u;%u", &a, &shader, &screen_res_w, &screen_res_h, &b, &c, &vcolors[0], &vcolors[1], &vcolors[2], &postfx_shader, &d);
 		bilinear = (a == 1);
 		hide_menubar = (b == 1);
 		vflux_enabled = (c == 1);
+		vsync = (d == 1);
 		SDL_SetVideoShader(shader);
 		SDL_SetVideoModeBilinear(bilinear);
 		screen_x = (int)(960.0f - screen_res_w) / 2;
 		screen_y = (int)(544.0f - screen_res_h) / 2;
 		SDL_SetVideoModeScaling(screen_x, screen_y, screen_res_w, screen_res_h);
+		SDL_SetVideoModeSync(vsync);
 		cfg_exists = true;
+	}
+	if (postfx_shader != POSTFX_NONE) {
+		setupPostFxFb();
+		switch (postfx_shader) {
+		case POSTFX_FXAA:
+			loadPostFxEffect("app0:shaders/fxaa_v.gxp", "app0:shaders/fxaa_f.gxp");
+			break;
+		case POSTFX_GREYSCALE:
+			loadPostFxEffect("app0:shaders/greyscale_v.gxp", "app0:shaders/greyscale_f.gxp");
+			break;
+		case POSTFX_SEPIA:
+			loadPostFxEffect("app0:shaders/sepia_v.gxp", "app0:shaders/sepia_f.gxp");
+			break;
+		case POSTFX_NEGATIVE:
+			loadPostFxEffect("app0:shaders/negative_v.gxp", "app0:shaders/negative_f.gxp");
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void DoPostFX() {
+	if (postfx_shader != 0) {
+		vglStopRendering();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		vglStartRendering();
+		glBindTexture(GL_TEXTURE_2D, main_fb_tex);
+		glUseProgram(cur_fx_shader[postfx_idx]);
+		vglIndexPointerMapped(vindices);
+		vglVertexAttribPointerMapped(0, vflux_vertices);
+		vglVertexAttribPointerMapped(1, vflux_texcoords);
+		vglDrawObjects(GL_TRIANGLE_FAN, 4, true);
+		glUseProgram(0);
 	}
 }
 
 void ImGui_callback() {
+	DoPostFX();
 	
 	ImGui_ImplVitaGL_NewFrame();
 	
@@ -137,6 +237,10 @@ void ImGui_callback() {
 		if (ImGui::BeginMainMenuBar()){
 		
 			if (ImGui::BeginMenu("Graphics")){
+				if (ImGui::MenuItem("V-Sync", nullptr, vsync)){
+					vsync = !vsync;
+					SDL_SetVideoModeSync(vsync);
+				}
 				if (ImGui::MenuItem("Bilinear Filter", nullptr, bilinear)){
 					bilinear = !bilinear;
 					SDL_SetVideoModeBilinear(bilinear);
@@ -170,6 +274,33 @@ void ImGui_callback() {
 					}
 					ImGui::EndMenu();
 				}
+				if (ImGui::BeginMenu("Post Processing")){
+					if (ImGui::MenuItem("None", nullptr, postfx_shader == POSTFX_NONE)){
+						postfx_shader = POSTFX_NONE;
+						SDL_SetVideoFrameBuffer(0);
+					}
+					if (ImGui::MenuItem("FXAA", nullptr, postfx_shader == POSTFX_FXAA)){
+						postfx_shader = POSTFX_FXAA;
+						loadPostFxEffect("app0:shaders/fxaa_v.gxp", "app0:shaders/fxaa_f.gxp");
+						setupPostFxFb();
+					}
+					if (ImGui::MenuItem("Greyscale", nullptr, postfx_shader == POSTFX_GREYSCALE)){
+						postfx_shader = POSTFX_GREYSCALE;
+						loadPostFxEffect("app0:shaders/greyscale_v.gxp", "app0:shaders/greyscale_f.gxp");
+						setupPostFxFb();
+					}
+					if (ImGui::MenuItem("Sepia Tone", nullptr, postfx_shader == POSTFX_SEPIA)){
+						postfx_shader = POSTFX_SEPIA;
+						loadPostFxEffect("app0:shaders/sepia_v.gxp", "app0:shaders/sepia_f.gxp");
+						setupPostFxFb();
+					}
+					if (ImGui::MenuItem("Negative", nullptr, postfx_shader == POSTFX_NEGATIVE)){
+						postfx_shader = POSTFX_NEGATIVE;
+						loadPostFxEffect("app0:shaders/negative_v.gxp", "app0:shaders/negative_f.gxp");
+						setupPostFxFb();
+					}
+					ImGui::EndMenu();
+				}
 				ImGui::EndMenu();
 			}
 		
@@ -181,7 +312,7 @@ void ImGui_callback() {
 				if (ImGui::MenuItem("Save settings")){
 					FILE *f = fopen("ux0:data/dstroydata/imgui.cfg", "wb+");
 					char str[256];
-					sprintf(str, "%u;%u;%f;%f;%u;%u;%f;%f;%f", bilinear ? 1 : 0, shader, screen_res_w, screen_res_h, hide_menubar ? 1 : 0, vflux_enabled ? 1 : 0, vcolors[0], vcolors[1], vcolors[2]);
+					sprintf(str, "%u;%u;%f;%f;%u;%u;%f;%f;%f;%u;%u", bilinear ? 1 : 0, shader, screen_res_w, screen_res_h, hide_menubar ? 1 : 0, vflux_enabled ? 1 : 0, vcolors[0], vcolors[1], vcolors[2], postfx_shader, vsync ? 1 : 0);
 					fwrite(str, 1, strlen(str), f);
 					fclose(f);
 					cfg_exists = true;
@@ -205,54 +336,64 @@ void ImGui_callback() {
 	}
 	
 	if (vflux_window){
-			ImGui::Begin("vFlux Configuration", &vflux_window);
-			ImGui::ColorPicker3("Filter Color", vcolors);
-			ImGui::Checkbox("Enable vFlux", &vflux_enabled);
-			ImGui::End();
-		}
+		ImGui::Begin("vFlux Configuration", &vflux_window);
+		ImGui::ColorPicker3("Filter Color", vcolors);
+		ImGui::Checkbox("Enable vFlux", &vflux_enabled);
+		ImGui::End();
+	}
 
-		if (res_window){
-			ImGui::Begin("Resolution", &res_window);
-			ImGui::SliderFloat("Width", &screen_res_w, 0.0f, 960.0f, "%g");
-			ImGui::SliderFloat("Height", &screen_res_h, 0.0f, 544.0f, "%g");
-			if (ImGui::Button("Fit (4:3)")){
-				screen_res_h = 544.0f;
-				screen_res_w = (4.0f * screen_res_h) / 3.0f;
-			}
-			if (ImGui::Button("Fit (16:10)")){
-				screen_res_h = 544.0f;
-				screen_res_w = (16.0f * screen_res_h) / 10.0f;
-			}
-			if (ImGui::Button("Full")){
-				screen_res_h = 544.0f;
-				screen_res_w = 960.0f;
-			}
-			if (ImGui::Button("2x")){
-				screen_res_h = 480.0f;
-				screen_res_w = 640.0f;
-			}
-			ImGui::End();
+	if (res_window){
+		ImGui::Begin("Resolution", &res_window);
+		ImGui::SliderFloat("Width", &screen_res_w, 0.0f, 960.0f, "%g");
+		ImGui::SliderFloat("Height", &screen_res_h, 0.0f, 544.0f, "%g");
+		if (ImGui::Button("Fit (4:3)")){
+			screen_res_h = 544.0f;
+			screen_res_w = (4.0f * screen_res_h) / 3.0f;
 		}
+		if (ImGui::Button("Fit (16:10)")){
+			screen_res_h = 544.0f;
+			screen_res_w = (16.0f * screen_res_h) / 10.0f;
+		}
+		if (ImGui::Button("Full")){
+			screen_res_h = 544.0f;
+			screen_res_w = 960.0f;
+		}
+		if (ImGui::Button("2x")){
+			screen_res_h = 480.0f;
+			screen_res_w = 640.0f;
+		}
+		ImGui::End();
+	}
 
-		if (credits_window){
-			ImGui::Begin("Credits", &credits_window);
-			ImGui::TextColored(ImVec4(255, 255, 0, 255), "Dstroy Vita v.1.0");
-			ImGui::Text("Port Author: Rinnegatamante");
-			ImGui::Text("Tester: HtheB");
-			ImGui::Separator();
-			ImGui::TextColored(ImVec4(255, 255, 0, 255), "Patreon Supporters:");
-			ImGui::Text("XandridFire");
-			ImGui::Text("Styde Pregny");
-			ImGui::Text("Billy McLaughlin II");
-			ImGui::Text("Colan Wiser");
-			ImGui::Separator();
-			ImGui::TextColored(ImVec4(255, 255, 0, 255), "Special thanks to:");
-			ImGui::Text("rsn8887 for fixing shaders for vitaGL usage and multiple players support");
-			ImGui::Text("ocornut for dear ImGui");
-			ImGui::Text("HtheB for the Livearea assets");
-			ImGui::Text("xy2_ for the English translation");
-			ImGui::End();
-		}
+	if (credits_window){
+		ImGui::Begin("Credits", &credits_window);
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "Dstroy Vita v.1.1");
+		ImGui::Text("Port Author: Rinnegatamante");
+		ImGui::Text("Tester: HtheB");
+		ImGui::Separator();
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "Patreon Supporters:");
+		ImGui::Text("XandridFire");
+		ImGui::Text("Freddy Parra");
+		ImGui::Text("Tain Sueiras");
+		ImGui::Text("Badmanwazzy37");
+		ImGui::Text("Titi Clash");
+		ImGui::Text("psymu");
+		ImGui::Text("@Sarkies_Proxy");
+		ImGui::Text("drd7of14");
+		ImGui::Text("ArkSource");
+		ImGui::Text("The Vita3K project");
+		ImGui::Text("The Libretro Team");
+		ImGui::Separator();
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "Special thanks to:");
+		ImGui::Text("rsn8887 for fixing shaders for vitaGL usage and multiple players support");
+		ImGui::Text("ocornut for dear ImGui");
+		ImGui::Text("HtheB for the Livearea assets");
+		ImGui::Text("xy2_ for the English translation");
+		ImGui::End();
+	}
+		
+	ImGui::Render();
+	ImGui_ImplVitaGL_RenderDrawData(ImGui::GetDrawData());
 	
 	if (vflux_enabled) {
 		memcpy(&colors[0], vcolors, sizeof(float) * 3);
@@ -277,16 +418,14 @@ void ImGui_callback() {
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
+		glUseProgram(0);
 		vglIndexPointerMapped(vindices);
-		vglVertexPointerMapped(vertices);
+		vglVertexPointerMapped(vflux_vertices);
 		vglColorPointerMapped(GL_FLOAT, colors);
 		vglDrawObjects(GL_TRIANGLE_FAN, 4, true);
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
-	
-	ImGui::Render();
-	ImGui_ImplVitaGL_RenderDrawData(ImGui::GetDrawData());
 	
 	if ((old_screen_res_w != screen_res_w) || (old_screen_res_h != screen_res_h)) {
 		screen_x = (int)(960.0f - screen_res_w) / 2;
@@ -352,19 +491,28 @@ bool TGIGlobals::init(TGIint screenWidth, TGIint screenHeight, TGIuint8 nSpriteS
 	
 	vindices = (uint16_t*)malloc(sizeof(uint16_t)*4);
 	colors = (float*)malloc(sizeof(float)*4*4);
-	vertices = (float*)malloc(sizeof(float)*3*4);
-	vertices[0] =   0.0f;
-	vertices[1] =   0.0f;
-	vertices[2] =   0.0f;
-	vertices[3] = 960.0f;
-	vertices[4] =   0.0f;
-	vertices[5] =   0.0f;
-	vertices[6] = 960.0f;
-	vertices[7] = 544.0f;
-	vertices[8] =   0.0f;
-	vertices[9] =   0.0f;
-	vertices[10]= 544.0f;
-	vertices[11]=   0.0f;
+	vflux_vertices = (float*)malloc(sizeof(float)*3*4);
+	vflux_texcoords = (float*)malloc(sizeof(float)*2*4);
+	vflux_vertices[0] =   0.0f;
+	vflux_vertices[1] =   0.0f;
+	vflux_vertices[2] =   0.0f;
+	vflux_vertices[3] = 960.0f;
+	vflux_vertices[4] =   0.0f;
+	vflux_vertices[5] =   0.0f;
+	vflux_vertices[6] = 960.0f;
+	vflux_vertices[7] = 544.0f;
+	vflux_vertices[8] =   0.0f;
+	vflux_vertices[9] =   0.0f;
+	vflux_vertices[10]= 544.0f;
+	vflux_vertices[11]=   0.0f;
+	vflux_texcoords[0] = 0.0f;
+	vflux_texcoords[1] = 0.0f;
+	vflux_texcoords[2] = 1.0f;
+	vflux_texcoords[3] = 0.0f;
+	vflux_texcoords[4] = 1.0f;
+	vflux_texcoords[5] = 1.0f;
+	vflux_texcoords[6] = 0.0f;
+	vflux_texcoords[7] = 1.0f;
 	vindices[0] = 0;
 	vindices[1] = 1;
 	vindices[2] = 2;
