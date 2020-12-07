@@ -74,7 +74,7 @@ bool DstroyMenuMain::init(void)
 #endif
 
 	
-	font.writeText("Dstroy Vita v.1.0", TGIGlobals::screenWidth/2, 5, TAcenter, 1, NULL);
+	font.writeText("Dstroy Vita v.1.1", TGIGlobals::screenWidth/2, 5, TAcenter, 1, NULL);
 
 	writeText("ADVENTURE", nXPos, nYPos, TAcenter, &item);
 	item.nId = 1;
